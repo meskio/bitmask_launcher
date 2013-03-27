@@ -3,34 +3,44 @@
 #include <string>
 
 #include <boost/python.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 #include <frameobject.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+namespace fs = boost::filesystem;
 
 int
 main(int argc, char** argv)
 {
   try {
+    fs::path full_path(fs::current_path());
+
     Py_Initialize();
-    object main_module = import("__main__");
-    object global = (main_module.attr("__dict__"));
+
+    Py_SetPythonHome(const_cast<char*>(full_path.string().c_str()));
+
+    py::object main_module = py::import("__main__");
+    py::object global = (main_module.attr("__dict__"));
 
     PySys_SetArgv(argc, argv);
 
-    exec(
-      "import os\n"
+    global["_pwd"] = full_path.string();
+
+    py::exec(
       "import sys\n"
+      "sys.path = [_pwd + '/lib',\n"
+      "            _pwd + '/apps',\n"
+      "            _pwd + '/apps/eip',\n"
+      "            _pwd]\n"
+      "import os\n"
       "import encodings.idna\n" // we need to make sure this is imported
-      "sys.path = [os.path.join(os.getcwd(), 'deps'),\n"
-      "            os.path.join(os.getcwd(), 'apps'),\n"
-      "            os.path.join(os.getcwd(), 'apps', 'eip'),\n"
-      "            os.getcwd()]\n"
       "sys.argv.append('--standalone')\n", global, global);
 
-    exec_file("apps/leap/app.py",
-              global,
-              global);
-  } catch (error_already_set&) {
+    py::exec_file("apps/leap/app.py",
+                  global,
+                  global);
+  } catch (py::error_already_set&) {
     PyErr_PrintEx(0);
     return 1;
   }
