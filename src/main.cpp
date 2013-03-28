@@ -37,7 +37,7 @@ main(int argc, char** argv)
       "import encodings.idna\n" // we need to make sure this is imported
       "sys.argv.append('--standalone')\n", global, global);
 
-    py::exec_file("apps/leap/app.py",
+    py::exec_file("apps/launcher.py",
                   global,
                   global);
   } catch (py::error_already_set&) {
