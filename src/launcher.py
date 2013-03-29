@@ -1,3 +1,4 @@
+import os
 import time
 import threading
 
@@ -9,8 +10,12 @@ class Thandy(threading.Thread):
     def run(self):
         while True:
             try:
+                os.environ["THP_DB_ROOT"] = os.path.join(os.getcwd(),
+                                                         "packages")
+                os.environ["THP_INSTALL_ROOT"] = os.path.join(os.getcwd(),
+                                                              "updates")
                 args = [
-                    "--repo=/home/chiiph/Code/leap/repo/",
+                    "--repo=/home/chiiph/Code/leap/repo/",  # TODO:set as a URL
                     "--debug",
                     "--install",
                     "/bundleinfo/LEAPClient/"
