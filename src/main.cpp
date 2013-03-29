@@ -33,7 +33,12 @@ mergeDirectories(const fs::path &source,
       if (fs::is_regular_file(dir_iter->status()))
       {
         auto destFilePath = dest / dir_iter->path().filename();
-        copy_file(dir_iter->path(), destFilePath, fs::copy_option::overwrite_if_exists);
+        std::cout << "copy_file " << dir_iter->path() << " to " << destFilePath << std::endl;
+        if (fs::exists(destFilePath))
+        {
+          fs::remove(destFilePath);
+        }
+        copy_file(dir_iter->path(), destFilePath);
       }
       else if (fs::is_directory(dir_iter->status()))
       {

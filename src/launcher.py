@@ -10,6 +10,9 @@ class Thandy(threading.Thread):
     def run(self):
         while True:
             try:
+                os.environ["THANDY_HOME"] = os.path.join(os.getcwd(),
+                                                         "config",
+                                                         "thandy")
                 os.environ["THP_DB_ROOT"] = os.path.join(os.getcwd(),
                                                          "packages")
                 os.environ["THP_INSTALL_ROOT"] = os.path.join(os.getcwd(),
