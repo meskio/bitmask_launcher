@@ -5,12 +5,44 @@
 #include <boost/python.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <frameobject.h>
 
 namespace py = boost::python;
 namespace fs = boost::filesystem;
 
 static const std::string UPDATES_DIR = "updates";
+static const std::string TEMP_PREFIX = "__tmp_";
+
+void
+removeTemps(const std::string source = ".")
+{
+  fs::path sourceDir(source);
+  fs::directory_iterator end_iter;
+
+  std::vector<fs::path> files;
+
+  if (fs::exists(sourceDir) && fs::is_directory(sourceDir))
+  {
+    for(fs::directory_iterator dir_iter(sourceDir); dir_iter != end_iter; ++dir_iter)
+    {
+      if (fs::is_regular_file(dir_iter->status()))
+      {
+        auto filename = dir_iter->path().filename();
+        if (boost::starts_with(filename.string(), TEMP_PREFIX))
+        {
+          std::cout << "remove " << dir_iter->path() << std::endl;
+          fs::remove(dir_iter->path());
+        }
+      }
+      else if (fs::is_directory(dir_iter->status()))
+      {
+        auto currentPath = dir_iter->path();
+        removeTemps(currentPath.string());
+      } // Ignore other kind of files for now
+    }
+  }
+}
 
 /**
    Given two directories, it merges them by copying new files and
@@ -32,11 +64,15 @@ mergeDirectories(const fs::path &source,
     {
       if (fs::is_regular_file(dir_iter->status()))
       {
-        auto destFilePath = dest / dir_iter->path().filename();
+        auto filename = dir_iter->path().filename();
+        auto destFilePath = dest / filename;
         std::cout << "copy_file " << dir_iter->path() << " to " << destFilePath << std::endl;
         if (fs::exists(destFilePath))
         {
-          fs::remove(destFilePath);
+          // On windows we can't remove, but we can rename and afterwards remove
+          auto tempFilePath = dest / fs::path("__tmp_" + filename.string());
+          //fs::remove(destFilePath);
+          fs::rename(destFilePath, tempFilePath);
         }
         copy_file(dir_iter->path(), destFilePath);
       }
@@ -69,6 +105,7 @@ updateIfNeeded()
   else
   {
     std::cout << "No updates found" << std::endl;
+    removeTemps();
   }
 }
 
