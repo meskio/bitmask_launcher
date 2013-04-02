@@ -18,8 +18,8 @@ class Thandy(threading.Thread):
                 os.environ["THP_INSTALL_ROOT"] = os.path.join(os.getcwd(),
                                                               "updates")
                 args = [
-                    "--repo=/home/chiiph/Code/leap/repo/",  # TODO:set as a URL
-                    "--debug",
+                    "--repo=repo/",
+                    "--debug",  # TODO: remove debug
                     "--install",
                     "/bundleinfo/LEAPClient/"
                 ]
