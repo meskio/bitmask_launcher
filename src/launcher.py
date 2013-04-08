@@ -1,10 +1,17 @@
 import os
+import platform
 import time
 import threading
 
 from leap.app import main as leap_client
 from thandy.ClientCLI import update as thandy_update
 
+
+bundles_per_platform = {
+    "Windows" : "/bundleinfo/LEAPClient-win/",
+    "Darwin" : "",
+    "Linux" : "/bundleinfo/LEAPClient/",
+}
 
 class Thandy(threading.Thread):
     def run(self):
@@ -19,13 +26,12 @@ class Thandy(threading.Thread):
                                                               "updates")
                 args = [
                     "--repo=repo/",
-                    "--debug",  # TODO: remove debug
                     "--install",
-                    "/bundleinfo/LEAPClient/"
+                    bundles_per_platform[platform.system()]
                 ]
                 thandy_update(args)
             except Exception as e:
-                print "ERROR1:", e
+                print "ERROR:", e
             finally:
                 time.sleep(60)
 

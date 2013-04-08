@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cmath>
 
 #include <boost/python.hpp>
 #include <boost/filesystem/operations.hpp>
