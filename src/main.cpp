@@ -30,7 +30,7 @@ removeTemps(const std::string source = ".")
       if (fs::is_regular_file(dir_iter->status()))
       {
         auto filename = dir_iter->path().filename();
-        if (boost::starts_with(filename.string(), TEMP_PREFIX))
+        if (boost::ends_with(filename.string(), TEMP_PREFIX))
         {
           std::cout << "remove " << dir_iter->path() << std::endl;
           fs::remove(dir_iter->path());
@@ -71,7 +71,7 @@ mergeDirectories(const fs::path &source,
         if (fs::exists(destFilePath))
         {
           // On windows we can't remove, but we can rename and afterwards remove
-          auto tempFilePath = dest / fs::path("__tmp_" + filename.string());
+          auto tempFilePath = dest / fs::path(filename.string() + TEMP_PREFIX);
           //fs::remove(destFilePath);
           fs::rename(destFilePath, tempFilePath);
         }

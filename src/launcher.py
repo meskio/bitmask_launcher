@@ -4,6 +4,8 @@ import time
 import threading
 
 from leap.app import main as leap_client
+from leap.common.events import server
+
 from thandy.ClientCLI import update as thandy_update
 
 
@@ -37,6 +39,8 @@ class Thandy(threading.Thread):
 
 
 if __name__ == "__main__":
+    server.ensure_server(port=8090)
+
     thandy_thread = Thandy()
     thandy_thread.daemon = True
     thandy_thread.start()
