@@ -137,7 +137,9 @@ main(int argc, char** argv)
       "            _pwd]\n"
       "import os\n"
       "import encodings.idna\n" // we need to make sure this is imported
-      "sys.argv.append('--standalone')\n", global, global);
+      "sys.argv.append('--standalone')\n"
+      "sys.argv.append('--debug')\n"
+      "sys.argv.append('--logfile=leap_client.log')\n", global, global);
 
     py::exec_file("apps/launcher.py",
                   global,
