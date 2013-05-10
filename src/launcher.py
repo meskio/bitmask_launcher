@@ -2,6 +2,7 @@ import os
 import platform
 import time
 import threading
+import ConfigParser
 
 from leap.app import main as leap_client
 from leap.common.events import server
@@ -14,6 +15,9 @@ bundles_per_platform = {
     "Darwin" : "",
     "Linux" : "/bundleinfo/LEAPClient/",
 }
+
+GENERAL_SECTION = "General"
+UPDATES_KEY = "Updates"
 
 class Thandy(threading.Thread):
     def run(self):
@@ -35,14 +39,27 @@ class Thandy(threading.Thread):
             except Exception as e:
                 print "ERROR:", e
             finally:
+                # TODO: Make this delay configurable
                 time.sleep(60)
 
 
 if __name__ == "__main__":
     server.ensure_server(port=8090)
 
-    thandy_thread = Thandy()
-    thandy_thread.daemon = True
-    thandy_thread.start()
+    config = ConfigParser.ConfigParser()
+    config.read("launcher.conf")
+
+    launch_thandy = False
+    try:
+        launch_thandy = config.getboolean(GENERAL_SECTION, UPDATES_KEY)
+    except ConfigParser.NoSectionError as ns:
+        pass
+    except ConfigParser.NoOptionError as no:
+        pass
+
+    if launch_thandy:
+        thandy_thread = Thandy()
+        thandy_thread.daemon = True
+        thandy_thread.start()
 
     leap_client()
