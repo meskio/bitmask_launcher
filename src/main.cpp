@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <cstdlib>
 
 #include <boost/python.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -117,10 +118,11 @@ main(int argc, char** argv)
     fs::path full_path(fs::current_path());
 
     updateIfNeeded();
-
-    Py_Initialize();
+    auto pypath = full_path.string() + ":" + full_path.string() + "/lib/";
+    setenv("PYTHONPATH", pypath.c_str(), 1);
 
     Py_SetPythonHome(const_cast<char*>(full_path.string().c_str()));
+    Py_Initialize();
 
     py::object main_module = py::import("__main__");
     py::object global = (main_module.attr("__dict__"));
