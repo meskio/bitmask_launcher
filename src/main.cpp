@@ -122,6 +122,8 @@ main(int argc, char** argv)
     setenv("PYTHONPATH", pypath.c_str(), 1);
 
     Py_SetPythonHome(const_cast<char*>(full_path.string().c_str()));
+    const char *prog_name = "leap-client";
+    Py_SetProgramName(const_cast<char*>(prog_name));
     Py_Initialize();
 
     py::object main_module = py::import("__main__");
