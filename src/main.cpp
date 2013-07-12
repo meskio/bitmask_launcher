@@ -119,7 +119,9 @@ main(int argc, char** argv)
 
     updateIfNeeded();
     auto pypath = full_path.string() + ":" + full_path.string() + "/lib/";
+#if not defined _WIN32 && not defined _WIN64
     setenv("PYTHONPATH", pypath.c_str(), 1);
+#endif
 
     Py_SetPythonHome(const_cast<char*>(full_path.string().c_str()));
     const char *prog_name = "leap-client";
