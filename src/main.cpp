@@ -120,6 +120,24 @@ main(int argc, char** argv)
     updateIfNeeded();
     auto pypath = full_path.string() + ":" + full_path.string() + "/lib/";
 #if not defined _WIN32 && not defined _WIN64
+    fs::path fromCore("./lib/libQtCore.so.4");
+    fs::path toCore("./lib/libQtCore.NOTUSED");
+    fs::path fromGui("./lib/libQtGui.so.4");
+    fs::path toGui("./lib/libQtGui.NOTUSED");
+    try {
+        auto desk = std::string(getenv("DESKTOP_SESSION"));
+        if(boost::starts_with(desk, "ubuntu"))
+        {
+            fs::rename(fromCore, toCore);
+            fs::rename(fromGui, toGui);
+        } else {
+            fs::rename(toCore, fromCore);
+            fs::rename(toGui, fromGui);
+        }
+    } catch(...) {
+
+    }
+
     setenv("PYTHONPATH", pypath.c_str(), 1);
 #endif
 
