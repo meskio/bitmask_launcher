@@ -1,0 +1,1 @@
+  o Use bitmask.log instead of leap_client.log. Closes #3424.
