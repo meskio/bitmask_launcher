@@ -4,7 +4,7 @@ import time
 import threading
 import ConfigParser
 
-from leap.app import main as leap_client
+from leap.bitmask.app import main as leap_client
 from leap.common.events import server
 
 from thandy.ClientCLI import update as thandy_update
