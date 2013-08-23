@@ -1,2 +1,8 @@
+0.3.0 Aug 23:
+  o Use bitmask.log instead of leap_client.log. Closes #3424.
+  o Update launcher icon, jumping guy -> rainbow mask.
+  o Use system's Qt libs if Ubuntu is detected as the host OS.
+  o Update launcher.py to use the new namespace leap.bitmask.
+
 0.2.0 Jul 12:
   o First release of the leap client launcher
