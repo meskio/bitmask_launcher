@@ -1,1 +1,0 @@
-  o Support user provided logfile option and default to bitmask.log otherwise. Fixes #4153.

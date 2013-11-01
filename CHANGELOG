@@ -1,3 +1,7 @@
+0.3.1 Nov 1:
+  o Support user provided logfile option and default to bitmask.log
+    otherwise. Fixes #4153.
+
 0.3.0 Aug 23:
   o Use bitmask.log instead of leap_client.log. Closes #3424.
   o Update launcher icon, jumping guy -> rainbow mask.
