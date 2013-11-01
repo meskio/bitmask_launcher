@@ -163,7 +163,8 @@ main(int argc, char** argv)
       "import encodings.idna\n" // we need to make sure this is imported
       "sys.argv.append('--standalone')\n"
       "sys.argv.append('--debug')\n"
-      "sys.argv.append('--logfile=bitmask.log')\n", global, global);
+      "if any(map(lambda x: x.startswith('--logfile') or x.startswith('-l'), sys.argv))\n"
+      "    sys.argv.append('--logfile=bitmask.log')\n", global, global);
 
     py::exec_file("apps/launcher.py",
                   global,
