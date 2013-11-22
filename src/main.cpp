@@ -118,7 +118,8 @@ main(int argc, char** argv)
     fs::path full_path(fs::current_path());
 
     updateIfNeeded();
-    auto pypath = full_path.string() + ":" + full_path.string() + "/lib/";
+    auto pypath = full_path.string() + "/apps/:" + full_path.string() + "/lib/";
+    std::cout << pypath << std::endl;
 #if not defined _WIN32 && not defined _WIN64
     fs::path fromCore("./lib/libQtCore.so.4");
     fs::path toCore("./lib/libQtCore.NOTUSED");
@@ -155,8 +156,8 @@ main(int argc, char** argv)
 
     py::exec(
       "import sys\n"
-      "sys.path = [_pwd + '/lib',\n"
-      "            _pwd + '/apps',\n"
+      "sys.path = [_pwd + '/apps',\n"
+      "            _pwd + '/lib',\n"
       "            _pwd + '/apps/eip',\n"
       "            _pwd]\n"
       "import os\n"
