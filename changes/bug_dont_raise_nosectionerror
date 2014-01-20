@@ -1,0 +1,2 @@
+  o Avoid the try/except idiom when accessing configs to avoid messing
+    with the client traceback. Fixes #5007.

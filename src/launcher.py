@@ -4,20 +4,21 @@ import time
 import threading
 import ConfigParser
 
-from leap.bitmask.app import main as leap_client
+from leap.bitmask.app import main as bitmask_client
 from leap.common.events import server
 
 from thandy.ClientCLI import update as thandy_update
 
 
 bundles_per_platform = {
-    "Windows" : "/bundleinfo/LEAPClient-win/",
-    "Darwin" : "",
-    "Linux" : "/bundleinfo/LEAPClient/",
+    "Windows": "/bundleinfo/LEAPClient-win/",
+    "Darwin": "",
+    "Linux": "/bundleinfo/LEAPClient/",
 }
 
 GENERAL_SECTION = "General"
 UPDATES_KEY = "Updates"
+
 
 class Thandy(threading.Thread):
     def run(self):
@@ -50,16 +51,16 @@ if __name__ == "__main__":
     config.read("launcher.conf")
 
     launch_thandy = False
-    try:
+
+    has_config = config.has_section(GENERAL_SECTION) and \
+        config.has_option(GENERAL_SECTION, UPDATES_KEY)
+
+    if has_config:
         launch_thandy = config.getboolean(GENERAL_SECTION, UPDATES_KEY)
-    except ConfigParser.NoSectionError as ns:
-        pass
-    except ConfigParser.NoOptionError as no:
-        pass
 
     if launch_thandy:
         thandy_thread = Thandy()
         thandy_thread.daemon = True
         thandy_thread.start()
 
-    leap_client()
+    bitmask_client()
