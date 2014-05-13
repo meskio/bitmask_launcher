@@ -94,14 +94,14 @@ mergeDirectories(const fs::path &source,
 }
 
 void
-updateIfNeeded()
+updateIfNeeded(fs::path &full_path)
 {
-  fs::path updatePath(fs::current_path() / fs::path(UPDATES_DIR));
+  fs::path updatePath(full_path / fs::path(UPDATES_DIR));
   if (fs::exists(updatePath))
   {
     std::cout << "Found updates, merging directories before doing anything..."
               << std::endl;
-    mergeDirectories(updatePath, fs::current_path());
+    mergeDirectories(updatePath, full_path);
     fs::remove_all(updatePath);
   }
   else
@@ -115,9 +115,9 @@ int
 main(int argc, char** argv)
 {
   try {
-    fs::path full_path(fs::current_path());
+    fs::path full_path(fs::system_complete(argv[0]).parent_path());
 
-    updateIfNeeded();
+    updateIfNeeded(full_path);
     auto pypath = full_path.string() + "/apps/:" + full_path.string() + "/lib/";
     std::cout << pypath << std::endl;
 #if not defined _WIN32 && not defined _WIN64
