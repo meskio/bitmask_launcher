@@ -5,7 +5,7 @@ import time
 import threading
 import ConfigParser
 
-from leap.bitmask.app import main as bitmask_client
+from leap.bitmask.app import start_app as bitmask_client
 from leap.common.events import server, signal
 from leap.common.events import events_pb2 as proto
 
