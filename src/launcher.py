@@ -28,7 +28,7 @@ class TUF(threading.Thread):
         """
         if config.has_section(GENERAL_SECTION) and \
                 config.has_option(GENERAL_SECTION, DELAY_KEY):
-            self.delay = config.getboolean(GENERAL_SECTION, DELAY_KEY)
+            self.delay = config.getint(GENERAL_SECTION, DELAY_KEY)
         else:
             self.delay = 60
 
