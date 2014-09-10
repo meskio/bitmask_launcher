@@ -24,7 +24,8 @@ DELAY_KEY = "updater_delay"
 class TUF(threading.Thread):
     def __init__(self, config):
         """
-        Initialize the list of mirrors, paths and other TUF dependencies from the config file
+        Initialize the list of mirrors, paths and other TUF dependencies from
+        the config file
         """
         if config.has_section(GENERAL_SECTION) and \
                 config.has_option(GENERAL_SECTION, DELAY_KEY):
@@ -34,7 +35,8 @@ class TUF(threading.Thread):
 
         self._load_mirrors(config)
         if not self.mirrors:
-            print "ERROR: No updater mirrors found (missing or not well formed launcher.conf)"
+            print("ERROR: No updater mirrors found (missing or not well "
+                  "formed launcher.conf)")
 
         self.bundle_path = os.getcwd()
         self.source_path = self.bundle_path
@@ -52,13 +54,16 @@ class TUF(threading.Thread):
 
         while True:
             try:
-                tuf.conf.repository_directory = os.path.join(self.bundle_path, 'repo')
+                tuf.conf.repository_directory = os.path.join(self.bundle_path,
+                                                             'repo')
 
-                updater = tuf.client.updater.Updater('leap-updater', self.mirrors)
+                updater = tuf.client.updater.Updater('leap-updater',
+                                                     self.mirrors)
                 updater.refresh()
 
                 targets = updater.all_targets()
-                updated_targets = updater.updated_targets(targets, self.source_path)
+                updated_targets = updater.updated_targets(targets,
+                                                          self.source_path)
                 for target in updated_targets:
                     updater.download_target(target, self.dest_path)
                     self._set_permissions(target)
@@ -66,8 +71,9 @@ class TUF(threading.Thread):
                     if os.path.isdir(self.update_path):
                         shutil.rmtree(self.update_path)
                     shutil.move(self.dest_path, self.update_path)
+                    filepath = sorted([f['filepath'] for f in updated_targets])
                     signal(proto.UPDATER_NEW_UPDATES,
-                           content=", ".join(sorted([f['filepath'] for f in updated_targets])))
+                           content=", ".join(filepath))
                     return
             except Exception as e:
                 print "ERROR:", e
@@ -88,12 +94,13 @@ class TUF(threading.Thread):
                                          'confined_target_dirs': ['']}
 
     def _set_permissions(self, target):
-        file_permisions = int(target["fileinfo"]["custom"]["file_permissions"], 8)
+        file_permissions_str = target["fileinfo"]["custom"]["file_permissions"]
+        file_permissions = int(file_permissions_str, 8)
         filepath = target['filepath']
         if filepath[0] == '/':
             filepath = filepath[1:]
         file_path = os.path.join(self.dest_path, filepath)
-        os.chmod(file_path, file_permisions)
+        os.chmod(file_path, file_permissions)
 
 
 if __name__ == "__main__":
