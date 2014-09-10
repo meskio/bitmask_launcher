@@ -12,9 +12,8 @@ from leap.common.events import events_pb2 as proto
 import tuf.client.updater
 
 bundles_per_platform = {
-    "Windows": "windows",
-    "Darwin": "darwin",
-    "Linux": "linux",
+    "Linux-i386": "linux-i368",
+    "Linux-x86_64": "linux-x86_64",
 }
 
 GENERAL_SECTION = "General"
@@ -75,6 +74,9 @@ class TUF(threading.Thread):
                     signal(proto.UPDATER_NEW_UPDATES,
                            content=", ".join(filepath))
                     return
+            except NotImplemented as e:
+                print "NotImplemented: ", e
+                return
             except Exception as e:
                 print "ERROR:", e
             finally:
@@ -86,8 +88,8 @@ class TUF(threading.Thread):
             if section[:6] != 'Mirror':
                 continue
             url_prefix = config.get(section, 'url_prefix')
-            metadata_path = bundles_per_platform[platform.system()] + '/metadata'
-            targets_path = bundles_per_platform[platform.system()] + '/targets'
+            metadata_path = self._repo_path() + '/metadata'
+            targets_path = self._repo_path() + '/targets'
             self.mirrors[section[7:]] = {'url_prefix': url_prefix,
                                          'metadata_path': metadata_path,
                                          'targets_path': targets_path,
@@ -101,6 +103,12 @@ class TUF(threading.Thread):
             filepath = filepath[1:]
         file_path = os.path.join(self.dest_path, filepath)
         os.chmod(file_path, file_permissions)
+
+    def _repo_path(self):
+        system = platform.system() + "-" + platform.machine()
+        if system not in bundles_per_platform:
+            raise NotImplemented("Platform %s not supported" % (system,))
+        return bundles_per_platform[system]
 
 
 if __name__ == "__main__":
