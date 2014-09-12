@@ -13,6 +13,7 @@ import tuf.client.updater
 
 bundles_per_platform = {
     "Linux-i386": "linux-i368",
+    "Linux-i686": "linux-i368",
     "Linux-x86_64": "linux-x86_64",
 }
 
@@ -107,7 +108,7 @@ class TUF(threading.Thread):
     def _repo_path(self):
         system = platform.system() + "-" + platform.machine()
         if system not in bundles_per_platform:
-            raise NotImplemented("Platform %s not supported" % (system,))
+            raise NotImplementedError("Platform %s not supported" % (system,))
         return bundles_per_platform[system]
 
 
