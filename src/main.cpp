@@ -5,8 +5,10 @@
 #include <cstdlib>
 
 #include <boost/python.hpp>
+#define BOOST_NO_CXX11_SCOPED_ENUMS 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#undef BOOST_NO_CXX11_SCOPED_ENUMS 
 #include <boost/algorithm/string/predicate.hpp>
 #include <frameobject.h>
 
