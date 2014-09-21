@@ -3,6 +3,7 @@
 #include <string>
 #include <cmath>
 #include <cstdlib>
+#include <unistd.h>
 
 #include <boost/python.hpp>
 #define BOOST_NO_CXX11_SCOPED_ENUMS 
@@ -123,23 +124,25 @@ main(int argc, char** argv)
     auto pypath = full_path.string() + "/apps/:" + full_path.string() + "/lib/";
     std::cout << pypath << std::endl;
 #if not defined _WIN32 && not defined _WIN64
-    fs::path fromCore("./lib/libQtCore.so.4");
-    fs::path toCore("./lib/libQtCore.NOTUSED");
-    fs::path fromGui("./lib/libQtGui.so.4");
-    fs::path toGui("./lib/libQtGui.NOTUSED");
+    chdir("lib");
+    fs::path fromCore("libQtCore.non-ubuntu");
+    fs::path toCore("libQtCore.so.4");
+    fs::path fromGui("libQtGui.non-ubuntu");
+    fs::path toGui("libQtGui.so.4");
     try {
         auto desk = std::string(getenv("DESKTOP_SESSION"));
         if(boost::starts_with(desk, "ubuntu"))
         {
-            fs::rename(fromCore, toCore);
-            fs::rename(fromGui, toGui);
+            fs::remove(toCore);
+            fs::remove(toGui);
         } else {
-            fs::rename(toCore, fromCore);
-            fs::rename(toGui, fromGui);
+            fs::create_symlink(fromCore, toCore);
+            fs::create_symlink(fromGui, toGui);
         }
     } catch(...) {
 
     }
+    chdir("..");
 
     setenv("PYTHONPATH", pypath.c_str(), 1);
 #endif
