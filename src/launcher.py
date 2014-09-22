@@ -64,6 +64,8 @@ class TUF(threading.Thread):
                 targets = updater.all_targets()
                 updated_targets = updater.updated_targets(targets,
                                                           self.source_path)
+                if updated_targets:
+                    print "There is updates needed. Start downloading updates."
                 for target in updated_targets:
                     updater.download_target(target, self.dest_path)
                     self._set_permissions(target)
@@ -74,6 +76,7 @@ class TUF(threading.Thread):
                     filepath = sorted([f['filepath'] for f in updated_targets])
                     signal(proto.UPDATER_NEW_UPDATES,
                            content=", ".join(filepath))
+                    print "Updates ready: ", filepath
                     return
             except NotImplemented as e:
                 print "NotImplemented: ", e
