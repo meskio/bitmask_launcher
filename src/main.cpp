@@ -3,6 +3,7 @@
 #include <string>
 #include <cmath>
 #include <cstdlib>
+#include <unistd.h>
 
 #include <boost/python.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -94,14 +95,14 @@ mergeDirectories(const fs::path &source,
 }
 
 void
-updateIfNeeded()
+updateIfNeeded(fs::path &full_path)
 {
-  fs::path updatePath(fs::current_path() / fs::path(UPDATES_DIR));
+  fs::path updatePath(full_path / fs::path(UPDATES_DIR));
   if (fs::exists(updatePath))
   {
     std::cout << "Found updates, merging directories before doing anything..."
               << std::endl;
-    mergeDirectories(updatePath, fs::current_path());
+    mergeDirectories(updatePath, full_path);
     fs::remove_all(updatePath);
   }
   else
@@ -115,28 +116,31 @@ int
 main(int argc, char** argv)
 {
   try {
-    fs::path full_path(fs::current_path());
+    fs::path full_path(fs::system_complete(argv[0]).parent_path());
 
-    updateIfNeeded();
-    auto pypath = full_path.string() + ":" + full_path.string() + "/lib/";
+    updateIfNeeded(full_path);
+    auto pypath = full_path.string() + "/apps/:" + full_path.string() + "/lib/";
+    std::cout << pypath << std::endl;
 #if not defined _WIN32 && not defined _WIN64
-    fs::path fromCore("./lib/libQtCore.so.4");
-    fs::path toCore("./lib/libQtCore.NOTUSED");
-    fs::path fromGui("./lib/libQtGui.so.4");
-    fs::path toGui("./lib/libQtGui.NOTUSED");
+    chdir("lib");
+    fs::path fromCore("libQtCore.non-ubuntu");
+    fs::path toCore("libQtCore.so.4");
+    fs::path fromGui("libQtGui.non-ubuntu");
+    fs::path toGui("libQtGui.so.4");
     try {
         auto desk = std::string(getenv("DESKTOP_SESSION"));
         if(boost::starts_with(desk, "ubuntu"))
         {
-            fs::rename(fromCore, toCore);
-            fs::rename(fromGui, toGui);
+            fs::remove(toCore);
+            fs::remove(toGui);
         } else {
-            fs::rename(toCore, fromCore);
-            fs::rename(toGui, fromGui);
+            fs::create_symlink(fromCore, toCore);
+            fs::create_symlink(fromGui, toGui);
         }
     } catch(...) {
 
     }
+    chdir("..");
 
     setenv("PYTHONPATH", pypath.c_str(), 1);
 #endif
@@ -155,15 +159,15 @@ main(int argc, char** argv)
 
     py::exec(
       "import sys\n"
-      "sys.path = [_pwd + '/lib',\n"
-      "            _pwd + '/apps',\n"
+      "sys.path = [_pwd + '/apps',\n"
+      "            _pwd + '/lib',\n"
       "            _pwd + '/apps/eip',\n"
       "            _pwd]\n"
       "import os\n"
       "import encodings.idna\n" // we need to make sure this is imported
       "sys.argv.append('--standalone')\n"
       "sys.argv.append('--debug')\n"
-      "if any(map(lambda x: x.startswith('--logfile') or x.startswith('-l'), sys.argv))\n"
+      "if not any(map(lambda x: x.startswith('--logfile') or x.startswith('-l'), sys.argv)):\n"
       "    sys.argv.append('--logfile=bitmask.log')\n", global, global);
 
     py::exec_file("apps/launcher.py",
