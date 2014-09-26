@@ -1,2 +1,0 @@
-- Add support for multiple archs in the same platform. Closes #6044
-- Stop updater if platform is not defined. Closes #6052
