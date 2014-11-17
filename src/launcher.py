@@ -43,6 +43,8 @@ class TUF(threading.Thread):
         self.dest_path = os.path.join(self.bundle_path, 'tmp')
         self.update_path = os.path.join(self.bundle_path, 'updates')
 
+        tuf.conf.ssl_certificates = "./lib/leap/common/cacert.pem"
+
         threading.Thread.__init__(self)
 
     def run(self):
