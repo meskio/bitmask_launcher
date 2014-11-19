@@ -1,3 +1,6 @@
+0.3.3 Nov 19, 2014:
+  o Add ssl cert to the updater
+
 0.3.2 Sept 26, 2014:
   o Add support for TUF.
   o Avoid the try/except idiom when accessing configs to avoid messing
