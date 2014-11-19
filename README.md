@@ -1,4 +1,5 @@
-leap_client_launcher
-====================
+bitmask_launcher
+================
 
-Launcher application for the LEAP python client, its daemons (imap, smtp, soledad) and the updater
+Launcher application for the Bitmask app (https://bitmask.net), its daemons (imap, smtp, soledad) and the updater.
+
