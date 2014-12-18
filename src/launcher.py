@@ -12,8 +12,8 @@ from leap.common.events import events_pb2 as proto
 import tuf.client.updater
 
 bundles_per_platform = {
-    "Linux-i386": "linux-i368",
-    "Linux-i686": "linux-i368",
+    "Linux-i386": "linux-i386",
+    "Linux-i686": "linux-i386",
     "Linux-x86_64": "linux-x86_64",
 }
 
