@@ -1,3 +1,6 @@
+0.3.4 Dec 31, 2014:
+  o Fix a typo in updater 32bit repo url.
+
 0.3.3 Nov 19, 2014:
   o Add ssl cert to the updater
 
