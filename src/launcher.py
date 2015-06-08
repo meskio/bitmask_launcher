@@ -6,8 +6,7 @@ import threading
 import ConfigParser
 
 from leap.bitmask.app import start_app as bitmask_client
-from leap.common.events import server, signal
-from leap.common.events import events_pb2 as proto
+from leap.common.events import server, emit, catalog
 
 import tuf.client.updater
 
@@ -76,8 +75,8 @@ class TUF(threading.Thread):
                         shutil.rmtree(self.update_path)
                     shutil.move(self.dest_path, self.update_path)
                     filepath = sorted([f['filepath'] for f in updated_targets])
-                    signal(proto.UPDATER_NEW_UPDATES,
-                           content=", ".join(filepath))
+                    emit(catalog.UPDATER_NEW_UPDATES,
+                         content=", ".join(filepath))
                     print "Updates ready: ", filepath
                     return
             except NotImplemented as e:
@@ -118,7 +117,7 @@ class TUF(threading.Thread):
 
 
 if __name__ == "__main__":
-    server.ensure_server(port=8090)
+    server.ensure_server()
 
     config = ConfigParser.ConfigParser()
     config.read("launcher.conf")
