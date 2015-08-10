@@ -118,7 +118,6 @@ main(int argc, char** argv)
   try {
     fs::path full_path(fs::system_complete(argv[0]).parent_path());
 
-    updateIfNeeded(full_path);
     auto pypath = full_path.string() + "/apps/:" + full_path.string() + "/lib/";
     std::cout << pypath << std::endl;
 #if not defined _WIN32 && not defined _WIN64
